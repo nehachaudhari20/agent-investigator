@@ -1,0 +1,46 @@
+# Core LLM + orchestration
+langchain
+langgraph
+agentscope
+
+# Observability
+langsmith
+
+# Evaluation
+deepeval
+
+# Vector / embeddings
+sentence-transformers
+chromadb
+
+# Memory / embeddings utils
+numpy
+pandas
+
+# API + utilities
+fastapi
+uvicorn
+httpx
+pydantic
+
+# Environment management
+python-dotenv
+
+# LLM providers
+openai
+google-generativeai
+
+# Async + logging
+aiofiles
+loguru
+
+# Data generation
+faker
+
+# Visualization
+matplotlib
+networkx
+
+# Notebook analysis
+jupyter
+ipykernel
