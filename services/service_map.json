@@ -1,0 +1,25 @@
+{
+  "gateway-service": {
+    "depends_on": ["payment-service", "fraud-service"]
+  },
+
+  "payment-service": {
+    "depends_on": ["ledger-service"]
+  },
+
+  "fraud-service": {
+    "depends_on": ["risk-engine"]
+  },
+
+  "notification-service": {
+    "depends_on": []
+  },
+
+  "ledger-service": {
+    "depends_on": []
+  },
+
+  "risk-engine": {
+    "depends_on": []
+  }
+}
