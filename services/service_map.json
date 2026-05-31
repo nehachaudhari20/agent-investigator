@@ -1,25 +1,40 @@
 {
-  "gateway-service": {
-    "depends_on": ["payment-service", "fraud-service"]
-  },
+  "services": {
+    "gateway-service": {
+      "type": "api_gateway",
+      "depends_on": [
+        "payment-service",
+        "fraud-service"
+      ]
+    },
 
-  "payment-service": {
-    "depends_on": ["ledger-service"]
-  },
+    "payment-service": {
+      "type": "transaction_processor",
+      "depends_on": [
+        "ledger-service"
+      ]
+    },
 
-  "fraud-service": {
-    "depends_on": ["risk-engine"]
-  },
+    "fraud-service": {
+      "type": "fraud_detection",
+      "depends_on": [
+        "risk-engine"
+      ]
+    },
 
-  "notification-service": {
-    "depends_on": []
-  },
+    "ledger-service": {
+      "type": "transaction_store",
+      "depends_on": []
+    },
 
-  "ledger-service": {
-    "depends_on": []
-  },
+    "notification-service": {
+      "type": "alert_service",
+      "depends_on": []
+    },
 
-  "risk-engine": {
-    "depends_on": []
+    "risk-engine": {
+      "type": "risk_scoring",
+      "depends_on": []
+    }
   }
 }
