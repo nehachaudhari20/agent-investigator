@@ -1,83 +1,91 @@
-import json
-import random
-
-
 class MetricGenerator:
 
-    def __init__(self):
+    BASELINE = {
 
-        with open(
-            "services/service_map.json",
-            "r"
-        ) as f:
+        "gateway-service": {
+            "latency_ms": 120,
+            "error_rate": 0.01
+        },
 
-            self.service_map = json.load(f)
+        "payment-service": {
+            "latency_ms": 200,
+            "error_rate": 0.02
+        },
+
+        "fraud-service": {
+            "latency_ms": 250,
+            "error_rate": 0.03
+        },
+
+        "risk-engine": {
+            "latency_ms": 180,
+            "error_rate": 0.02
+        },
+
+        "ledger-service": {
+            "latency_ms": 90,
+            "error_rate": 0.005
+        },
+
+        "notification-service": {
+            "latency_ms": 100,
+            "error_rate": 0.01
+        }
+    }
 
     def generate_metrics(
         self,
-        snapshots=100
+        scenario
     ):
 
         metrics = []
 
-        services = list(
-            self.service_map["services"].keys()
-        )
+        root = scenario[
+            "root_cause"
+        ]
 
-        for _ in range(snapshots):
+        for service, values in (
+            self.BASELINE.items()
+        ):
 
-            service = random.choice(
-                services
-            )
+            latency = values[
+                "latency_ms"
+            ]
+
+            error_rate = values[
+                "error_rate"
+            ]
+
+            if scenario[
+                "scenario_id"
+            ] == "retry_storm":
+
+                if service == "risk-engine":
+                    latency = 3500
+                    error_rate = 0.30
+
+                elif service == "fraud-service":
+                    latency = 2500
+                    error_rate = 0.20
+
+                elif service == "payment-service":
+                    latency = 1800
+                    error_rate = 0.15
+
+                elif service == "gateway-service":
+                    latency = 1200
+                    error_rate = 0.10
 
             metrics.append({
 
                 "service": service,
 
-                "cpu_usage":
-                    round(
-                        random.uniform(10, 90),
-                        2
-                    ),
-
-                "memory_usage":
-                    round(
-                        random.uniform(20, 95),
-                        2
-                    ),
-
                 "latency_ms":
-                    random.randint(
-                        50,
-                        5000
-                    ),
+                    latency,
 
                 "error_rate":
-                    round(
-                        random.uniform(
-                            0,
-                            0.4
-                        ),
-                        3
-                    )
+                    error_rate
+
             })
 
         return metrics
-
-
-if __name__ == "__main__":
-
-    generator = MetricGenerator()
-
-    metrics = generator.generate_metrics()
-
-    output_file = (
-        "datasets/metrics/sample_metrics.json"
-    )
-
-    with open(output_file, "w") as f:
-        json.dump(metrics, f, indent=4)
-
-    print(
-        f"{len(metrics)} metrics written to {output_file}"
-    )

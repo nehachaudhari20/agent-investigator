@@ -6,80 +6,78 @@ class TraceGenerator:
 
     def __init__(self):
 
-        with open(
-            "services/service_map.json",
-            "r"
-        ) as f:
-
+        with open("services/service_map.json", "r") as f:
             self.service_map = json.load(f)
 
-    def build_path(
-        self,
-        current_service,
-        path=None
-    ):
+    def build_path(self, service):
 
-        if path is None:
-            path = []
+        path = [service]
 
-        path.append(
-            current_service
-        )
+        while True:
 
-        dependencies = (
-            self.service_map["services"]
-            [current_service]
-            ["depends_on"]
-        )
+            dependencies = (
+                self.service_map["services"][service]
+                ["depends_on"]
+            )
 
-        if not dependencies:
-            return path
+            if not dependencies:
+                break
 
-        next_service = random.choice(
-            dependencies
-        )
+            service = random.choice(
+                dependencies
+            )
 
-        return self.build_path(
-            next_service,
-            path
-        )
+            path.append(service)
+
+        return path
 
     def generate_traces(
         self,
+        scenario,
         count=100
     ):
 
         traces = []
 
-        for _ in range(count):
+        root_cause = scenario[
+            "root_cause"
+        ]
+
+        for i in range(count):
+
+            if root_cause == "risk-engine":
+
+                path = [
+                    "gateway-service",
+                    "fraud-service",
+                    "risk-engine"
+                ]
+
+            elif root_cause == "fraud-service":
+
+                path = [
+                    "gateway-service",
+                    "fraud-service"
+                ]
+
+            else:
+
+                path = self.build_path(
+                    "gateway-service"
+                )
 
             traces.append({
 
                 "trace_id":
-                    f"txn_{random.randint(1000,9999)}",
+                    f"txn_{1000+i}",
 
-                "path":
-                    self.build_path(
-                        "gateway-service"
-                    )
+                "scenario":
+                    scenario[
+                        "scenario_id"
+                    ],
+
+                "path": path
+
             })
 
         return traces
-
-
-if __name__ == "__main__":
-
-    generator = TraceGenerator()
-
-    traces = generator.generate_traces()
-
-    output_file = (
-        "datasets/traces/sample_traces.json"
-    )
-
-    with open(output_file, "w") as f:
-        json.dump(traces, f, indent=4)
-
-    print(
-        f"{len(traces)} traces written to {output_file}"
-    )

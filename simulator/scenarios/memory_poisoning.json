@@ -1,0 +1,12 @@
+{
+  "scenario_id": "memory_poisoning",
+  "title": "Historical Memory Bias",
+
+  "root_cause": "risk-engine",
+
+  "failure_type": "configuration_corruption",
+
+  "affected_services": ["fraud-service", "payment-service"],
+
+  "severity": "high"
+}

@@ -1,0 +1,12 @@
+{
+  "scenario_id": "retry_storm",
+  "title": "Fraud Service Retry Storm",
+
+  "root_cause": "risk-engine",
+
+  "failure_type": "latency_spike",
+
+  "affected_services": ["fraud-service", "payment-service", "gateway-service"],
+
+  "severity": "high"
+}

@@ -1,0 +1,12 @@
+{
+  "scenario_id": "misleading_logs",
+  "title": "Misleading Error Propagation",
+
+  "root_cause": "fraud-service",
+
+  "failure_type": "cache_corruption",
+
+  "affected_services": ["payment-service", "gateway-service"],
+
+  "severity": "high"
+}
