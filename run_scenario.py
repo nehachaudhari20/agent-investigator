@@ -1,4 +1,6 @@
 import json
+import sys
+import os
 
 from simulator.scenario_loader import (
     load_scenario
@@ -20,10 +22,18 @@ from simulator.generators.incident_generator import (
     generate_incident
 )
 
+if len(sys.argv) != 2:
+    print(
+        "Usage: python run_scenario.py "
+        "<scenario_name>"
+    )
+    sys.exit(1)
+
+scenario_name = sys.argv[1]
 
 SCENARIO_PATH = (
-    "simulator/scenarios/"
-    "retry_storm.json"
+    f"simulator/scenarios/"
+    f"{scenario_name}.json"
 )
 
 scenario = load_scenario(
