@@ -1,0 +1,30 @@
+[
+  {
+    "incident_id": "INC_HIST_001",
+    "title": "Payment Failure Spike",
+    "root_cause": "database-overload",
+    "summary": "Database saturation caused increased payment latency and transaction failures.",
+    "severity": "HIGH"
+  },
+  {
+    "incident_id": "INC_HIST_002",
+    "title": "Gateway Timeout Cascade",
+    "root_cause": "database-overload",
+    "summary": "Heavy database load propagated latency to downstream payment services.",
+    "severity": "HIGH"
+  },
+  {
+    "incident_id": "INC_HIST_003",
+    "title": "Transaction Processing Degradation",
+    "root_cause": "database-overload",
+    "summary": "Database bottleneck triggered retries and timeout errors across payment workflows.",
+    "severity": "MEDIUM"
+  },
+  {
+    "incident_id": "INC_HIST_004",
+    "title": "Ledger Synchronization Failure",
+    "root_cause": "database-overload",
+    "summary": "Database contention delayed ledger updates and caused transaction backlogs.",
+    "severity": "HIGH"
+  }
+]
