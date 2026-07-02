@@ -47,6 +47,24 @@ def format_evidence_for_llm(evidence: Dict[str, Any],
     for service, metrics in metrics_analysis.get('service_metrics', {}).items():
         prompt += f"- {service}: {metrics['latency_ms']}ms latency, {metrics['error_rate']:.4f} error rate\n"
     
+        prompt += "\n### Trace Analysis:\n"
+
+    prompt += f"- Trace candidates: {', '.join(evidence.get('trace_candidates', []) or ['none'])}\n"
+    prompt += f"- Total traces analyzed: {evidence.get('total_traces', 0)}\n"
+
+    prompt += "\nMost common trace paths:\n"
+    for path_info in evidence.get('most_common_paths', [])[:3]:
+        path = " -> ".join(path_info.get('path', []))
+        count = path_info.get('count', 0)
+        prompt += f"- {path}: {count} traces\n"
+
+    prompt += "\nDependency edges:\n"
+    for edge in evidence.get('dependency_edges', [])[:5]:
+        source = edge.get('source')
+        target = edge.get('target')
+        count = edge.get('count', 0)
+        prompt += f"- {source} -> {target}: {count} traces\n"
+        
     prompt += "\n### Evidence Summary:\n"
     for service_evidence in evidence.get('evidence_details', [])[:5]:
         service = service_evidence['service']

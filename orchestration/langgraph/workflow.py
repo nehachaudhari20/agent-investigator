@@ -13,7 +13,7 @@ from .nodes.log_node import log_node
 from .nodes.metrics_node import metrics_node
 from .nodes.evidence_node import evidence_node
 from .nodes.rca_node import rca_node
-
+from .nodes.trace_node import trace_node
 
 def create_investigation_graph() -> StateGraph:
     """
@@ -30,11 +30,13 @@ def create_investigation_graph() -> StateGraph:
     workflow.add_node("metrics_node", metrics_node)
     workflow.add_node("evidence_node", evidence_node)
     workflow.add_node("rca_node", rca_node)
+    workflow.add_node("trace_node", trace_node)
     
     # Add edges (deterministic flow)
     workflow.set_entry_point("log_node")
     workflow.add_edge("log_node", "metrics_node")
-    workflow.add_edge("metrics_node", "evidence_node")
+    workflow.add_edge("metrics_node", "trace_node")
+    workflow.add_edge("trace_node", "evidence_node")
     workflow.add_edge("evidence_node", "rca_node")
     workflow.add_edge("rca_node", END)
     
@@ -67,7 +69,9 @@ def run_investigation(scenario: str, dataset_base_path: str = "datasets") -> Dic
         logs_analysis=None,
         metrics_analysis=None,
         evidence=None,
-        rca_result=None
+        rca_result=None,
+        trace_analysis=None,
+        
     )
     
     # Create and run graph
@@ -104,7 +108,9 @@ def format_results(final_state: Dict[str, Any]) -> Dict[str, Any]:
             'logs_analyzed': final_state.get('logs_analysis', {}).get('total_logs_analyzed', 0),
             'services_evaluated': evidence.get('service_count', 0),
             'latency_outliers': evidence.get('latency_outliers', []),
-            'error_outliers': evidence.get('error_outliers', [])
+            'error_outliers': evidence.get('error_outliers', []),
+            'traces_analyzed': final_state.get('trace_analysis', {}).get('total_traces_analyzed', 0),
+            'trace_candidates': evidence.get('trace_candidates', []),
         }
     }
     

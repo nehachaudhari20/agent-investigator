@@ -1,0 +1,50 @@
+{
+  "scenario": "retry_storm",
+  "root_cause": "risk-engine",
+  "confidence": 0.95,
+  "reasoning": "risk-engine is identified as the primary root cause due to a confluence of strong evidence. It is the first service listed in the Error Cascade, indicating it initiated the chain of failures. It exhibits the highest latency (3500ms) and highest error rate (0.3000) among all services, and is explicitly identified as the 'Highest Latency Service' and a 'Latency Outlier'. Crucially, trace analysis shows 'risk-engine: terminal_trace_count = 100', meaning 100 traces terminate at risk-engine, confirming it as the point of failure for those requests. This is further supported by its highest anomaly score (1.099) and the presence of 'timeout' and 'unavailable' error patterns which align with a high-latency, failing service.",
+  "supporting_evidence": [
+    "risk-engine: terminal_trace_count = 100",
+    "risk-engine: 3500ms latency, 0.3000 error rate (Highest Latency Service)",
+    "Error Cascade: 1. risk-engine"
+  ],
+  "affected_services": [
+    "fraud-service",
+    "payment-service",
+    "gateway-service"
+  ],
+  "suspect_services": [
+    "risk-engine",
+    "payment-service",
+    "fraud-service",
+    "gateway-service"
+  ],
+  "suspect_scores": {
+    "risk-engine": 1.099,
+    "payment-service": 0.7,
+    "fraud-service": 0.614,
+    "gateway-service": 0
+  },
+  "error_patterns": {
+    "delayed": 200,
+    "timeout": 100,
+    "retry": 100,
+    "unavailable": 100
+  },
+  "analysis_details": {
+    "logs_analyzed": 500,
+    "services_evaluated": 4,
+    "latency_outliers": [
+      "fraud-service",
+      "risk-engine"
+    ],
+    "error_outliers": [
+      "fraud-service",
+      "risk-engine"
+    ],
+    "traces_analyzed": 100,
+    "trace_candidates": [
+      "risk-engine"
+    ]
+  }
+}
