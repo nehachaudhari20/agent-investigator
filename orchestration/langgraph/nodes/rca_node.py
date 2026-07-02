@@ -47,7 +47,7 @@ def format_evidence_for_llm(evidence: Dict[str, Any],
     for service, metrics in metrics_analysis.get('service_metrics', {}).items():
         prompt += f"- {service}: {metrics['latency_ms']}ms latency, {metrics['error_rate']:.4f} error rate\n"
     
-        prompt += "\n### Trace Analysis:\n"
+    prompt += "\n### Trace Analysis:\n"
 
     prompt += f"- Trace candidates: {', '.join(evidence.get('trace_candidates', []) or ['none'])}\n"
     prompt += f"- Total traces analyzed: {evidence.get('total_traces', 0)}\n"
@@ -230,10 +230,11 @@ def perform_rca(evidence: Dict[str, Any],
         else:
             root_cause = 'unknown'
             confidence = 0.0
+        confidence = min(max(float(confidence), 0.0), 1.0)
 
         return {
             'root_cause': root_cause,
-            'confidence': float(confidence),
+            'confidence': confidence,
             'reasoning': f'Gemini call failed ({_format_gemini_error(e)}). Using heuristic ranking: highest anomaly score.',
             'supporting_evidence': evidence.get('evidence_details', [])[:3],
             'affected_services': evidence.get('error_cascade_order', [])

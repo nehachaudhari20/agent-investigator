@@ -1,0 +1,53 @@
+{
+  "scenario": "retry_storm",
+  "root_cause": "risk-engine",
+  "confidence": 0.95,
+  "reasoning": "risk-engine exhibits the highest latency (3500ms), the highest error rate (0.3000), and the highest anomaly score (1.099) among all services. It is the first service listed in the error cascade and the deepest service in the common trace path (gateway-service -> fraud-service -> risk-engine). Crucially, 100% of analyzed traces terminate at risk-engine, indicating that transactions are failing at or within this service. Its poor performance likely causes upstream services like fraud-service and gateway-service to experience delays and errors.",
+  "supporting_evidence": [
+    "Highest Latency Service: risk-engine (3500ms)",
+    "Services Ranked by Anomaly Score: risk-engine: 1.099",
+    "Trace Analysis: risk-engine terminal_trace_count = 100",
+    "Error Cascade: 1. risk-engine"
+  ],
+  "affected_services": [
+    "fraud-service",
+    "payment-service",
+    "gateway-service"
+  ],
+  "suspect_services": [
+    "risk-engine",
+    "payment-service",
+    "fraud-service",
+    "gateway-service"
+  ],
+  "suspect_scores": {
+    "risk-engine": 1.099,
+    "payment-service": 0.7,
+    "fraud-service": 0.614,
+    "gateway-service": 0
+  },
+  "error_patterns": {
+    "delayed": 200,
+    "timeout": 100,
+    "retry": 100,
+    "unavailable": 100
+  },
+  "analysis_details": {
+    "logs_analyzed": 500,
+    "services_evaluated": 4,
+    "latency_outliers": [
+      "fraud-service",
+      "risk-engine"
+    ],
+    "error_outliers": [
+      "fraud-service",
+      "risk-engine"
+    ],
+    "traces_analyzed": 100,
+    "trace_candidates": [
+      "risk-engine"
+    ],
+    "pipeline_version": "phase-4-langsmith-trace-node",
+    "langsmith_tracing_configured": true
+  }
+}

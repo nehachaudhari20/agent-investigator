@@ -14,6 +14,12 @@ from .nodes.metrics_node import metrics_node
 from .nodes.evidence_node import evidence_node
 from .nodes.rca_node import rca_node
 from .nodes.trace_node import trace_node
+from .observability import (
+    PIPELINE_VERSION,
+    build_run_config,
+    configure_langsmith,
+    langsmith_enabled,
+)
 
 def create_investigation_graph() -> StateGraph:
     """
@@ -22,6 +28,8 @@ def create_investigation_graph() -> StateGraph:
     Returns:
         Compiled StateGraph ready for invocation
     """
+    configure_langsmith()
+
     # Create the graph
     workflow = StateGraph(InvestigationState)
     
@@ -76,7 +84,7 @@ def run_investigation(scenario: str, dataset_base_path: str = "datasets") -> Dic
     
     # Create and run graph
     graph = create_investigation_graph()
-    final_state = graph.invoke(initial_state)
+    final_state = graph.invoke(initial_state, config=build_run_config(scenario))
     
     return final_state
 
@@ -111,6 +119,8 @@ def format_results(final_state: Dict[str, Any]) -> Dict[str, Any]:
             'error_outliers': evidence.get('error_outliers', []),
             'traces_analyzed': final_state.get('trace_analysis', {}).get('total_traces_analyzed', 0),
             'trace_candidates': evidence.get('trace_candidates', []),
+            'pipeline_version': PIPELINE_VERSION,
+            'langsmith_tracing_configured': langsmith_enabled(),
         }
     }
     

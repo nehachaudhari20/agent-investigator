@@ -100,11 +100,11 @@ def main():
             print(f"  - Failure type: {ground_truth['failure_type']}")
             
             accuracy = report['root_cause'] == ground_truth['root_cause']
-            print(f"\nAccuracy: {'✓ CORRECT' if accuracy else '✗ INCORRECT'}")
+            print(f"\nAccuracy: {'CORRECT' if accuracy else 'INCORRECT'}")
             print()
     
     except Exception as e:
-        print(f"\n❌ Investigation failed: {str(e)}")
+        print(f"\nInvestigation failed: {str(e)}")
         import traceback
         traceback.print_exc()
         sys.exit(1)
