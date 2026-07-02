@@ -1,6 +1,6 @@
-# Agent Investigator
+# 🔎 Agent Investigator
 
-> A research platform for evaluating governance, reasoning, observability, and memory in LLM-powered multi-agent systems.
+> **A research platform for evaluating governance, reasoning, observability, and memory in LLM-powered multi-agent systems.**
 
 ![Python](https://img.shields.io/badge/Python-3.11+-blue)
 ![LangGraph](https://img.shields.io/badge/LangGraph-Orchestration-green)
@@ -10,37 +10,38 @@
 
 ---
 
-## Overview
+# Overview
 
-Modern AI agents are increasingly deployed to perform complex reasoning tasks across software systems. While frameworks provide orchestration, memory, and observability, there is limited understanding of how these systems behave under conflicting evidence, misleading telemetry, or biased historical memory.
+Modern AI agents are increasingly deployed to perform complex reasoning tasks across software systems. While agent frameworks provide orchestration, memory, and observability, there is still limited understanding of how these systems behave under conflicting evidence, misleading telemetry, or biased historical memory.
 
 **Agent Investigator** is a research platform that benchmarks agent reasoning under realistic operational incidents using synthetic production environments, controlled failure scenarios, and governance-focused evaluation.
 
-Rather than proposing a new agent framework, this project evaluates the strengths and limitations of existing ones.
+Rather than proposing another agent framework, this project experimentally evaluates the strengths, limitations, and trustworthiness of existing approaches.
 
 ---
 
-## Research Goal
+# Research Goal
 
-This project aims to answer:
+This project aims to answer the following question:
 
 > **Can modern LLM-powered agent systems perform trustworthy root cause analysis under incomplete, conflicting, misleading, and memory-influenced evidence?**
 
-The findings from this repository will serve as the experimental foundation for **AgentTrust**, a governance framework for trustworthy autonomous agents.
+The insights obtained from these experiments form the experimental foundation for **AgentTrust**, a governance framework for trustworthy autonomous AI systems.
 
 ---
 
 # Key Features
 
 - Synthetic production environment simulator
-- FinTech-inspired microservice dependency graph
+- FinTech-inspired service dependency graph
 - Incident scenario generation
 - Log, metric, and distributed trace synthesis
-- LangGraph investigation workflow
-- LangSmith observability integration
+- LangGraph-based investigation workflow
+- LangSmith observability and execution tracing
 - Pluggable memory abstraction layer
 - Governance-oriented benchmark scenarios
-- Extensible evaluation pipeline
+- Extensible experimentation framework
+- Automated investigation report generation
 
 ---
 
@@ -81,14 +82,17 @@ agent-investigator/
 │
 ├── outputs/
 │
-└── docs/
+├── docs/
+│
+├── requirements.txt
+└── README.md
 ```
 
 ---
 
 # Synthetic Environment
 
-The benchmark simulates a production payment platform consisting of interconnected services.
+The benchmark simulates a production-grade payment platform consisting of interconnected services.
 
 ```text
 Gateway Service
@@ -103,73 +107,45 @@ Payment Service   Fraud Service
 Notification Service
 ```
 
-Instead of deploying real microservices, the repository generates realistic operational telemetry that preserves service dependencies and failure propagation.
+Instead of deploying real microservices, the repository generates realistic operational telemetry that preserves service dependencies, causal relationships, and failure propagation.
 
 ---
 
 # Benchmark Scenarios
 
-## Retry Storm
+## 🔥 Retry Storm
 
-Simulates cascading retries originating from the Risk Engine.
+Simulates cascading retries originating from downstream service degradation.
 
-Purpose:
+**Research Focus**
 
 - Causality reconstruction
 - Root cause localization
 - Dependency propagation
 
-Ground Truth:
-
-```
-Risk Engine
-    ↓
-Fraud Service
-    ↓
-Payment Service
-    ↓
-Gateway Service
-```
-
 ---
 
-## Misleading Logs
+## 🎭 Misleading Logs
 
-The visible logs primarily implicate the Payment Service while the actual failure originates in the Fraud Service.
+Operational logs intentionally implicate the wrong service while the actual failure originates elsewhere.
 
-Purpose:
+**Research Focus**
 
-- Hallucination detection
+- Hallucination resistance
 - Evidence prioritization
 - Robust reasoning
 
 ---
 
-## Memory Poisoning
+## 🧠 Memory Poisoning
 
-Historical memory intentionally conflicts with current evidence.
+Historical incident memory intentionally conflicts with the current operational evidence.
 
-Current Incident
+**Research Focus**
 
-```
-Root Cause
-
-Risk Engine
-```
-
-Historical Memory
-
-```
-Database Overload
-Database Overload
-Database Overload
-```
-
-Purpose:
-
-- Memory bias analysis
-- Retrieval robustness
-- Governance evaluation
+- Memory bias
+- Retrieval influence
+- Governance analysis
 
 ---
 
@@ -178,170 +154,218 @@ Purpose:
 The investigation pipeline is implemented using LangGraph.
 
 ```text
-                START
-                  │
-      ┌───────────┼────────────┐
-      │           │            │
-      ▼           ▼            ▼
- Log Node   Metrics Node   Trace Node
-      │           │            │
-      └───────────┼────────────┘
-                  ▼
-        Evidence Aggregator
-                  │
-                  ▼
-         Historical Memory
-                  │
-                  ▼
-           Gemini RCA Engine
-                  │
-                  ▼
-                 END
+                         Incident
+                             │
+      ┌──────────────────────┼──────────────────────┐
+      ▼                      ▼                      ▼
+   Logs                  Metrics                Traces
+      │                      │                      │
+      └──────────────────────┼──────────────────────┘
+                             ▼
+                 Evidence Aggregation Layer
+                             │
+                             ▼
+                  Historical Memory Retrieval
+                             │
+                             ▼
+                 LangGraph Investigation Engine
+                             │
+                             ▼
+                    Gemini Root Cause Analysis
+                             │
+                             ▼
+                  LangSmith Observability Layer
+                             │
+                             ▼
+                   Structured Investigation Report
 ```
 
-Each node performs a single responsibility before passing structured state to the next stage.
+Each stage performs a specialized task before passing structured context to the next stage, enabling transparent and reproducible investigations.
 
 ---
 
 # Observability
 
-The workflow is fully instrumented with LangSmith.
+The investigation workflow is fully instrumented using LangSmith.
 
 Captured information includes:
 
-- LangGraph execution graph
+- Execution graph
 - Prompt traces
 - LLM responses
-- Node latency
+- Node execution latency
 - State transitions
 - Token usage
+- Investigation lineage
 
-This enables detailed governance analysis of every investigation.
+This enables detailed inspection of agent reasoning throughout the investigation process.
 
 ---
 
 # Memory Layer
 
-The memory subsystem is intentionally abstracted from the orchestration framework.
+The memory subsystem is abstracted behind a common retrieval interface, allowing different memory implementations to be evaluated under identical investigation workflows.
 
-Current implementation:
+The platform supports:
 
-- JSON-based retrieval
-- Historical incident memory
-- Poisoned memory benchmark
+- Historical incident retrieval
+- Memory-based contextual reasoning
+- Memory poisoning benchmarks
+- Pluggable retrieval backends
 
-Future implementations:
-
-- TencentDB-Agent-Memory
-- Vector databases
-- Hybrid retrieval systems
-
-The workflow remains unchanged regardless of the underlying memory backend.
+This architecture enables systematic evaluation of how memory influences autonomous agent reasoning.
 
 ---
 
-# Current Technology Stack
+# Research Ecosystem
 
-## Core
+Agent Investigator is designed to evaluate and integrate modern AI agent technologies within a unified benchmarking environment.
 
-- Python
+| Framework | Purpose |
+|-----------|---------|
+| LangGraph | Workflow orchestration |
+| LangSmith | Observability & tracing |
+| Google Gemini | Root cause reasoning |
+| DeepEval | Evaluation & benchmarking |
+| TencentDB-Agent-Memory | Memory backend |
+| JSON Memory | Baseline retrieval layer |
+
+Useful resources:
+
+- LangGraph — https://langchain-ai.github.io/langgraph/
+- LangSmith — https://smith.langchain.com/
+- Google Gemini — https://ai.google.dev/
+- DeepEval — https://github.com/confident-ai/deepeval
+- TencentDB-Agent-Memory — https://github.com/Tencent/TencentDB-Agent-Memory
+
+---
+
+# Technology Stack
+
+### AI & Orchestration
+
 - LangGraph
-- Gemini
+- Google Gemini
 - LangSmith
 
-## Data
+### Programming
 
-- JSON
-- Synthetic telemetry
+- Python 3.11+
 
-## AI
+### Data
 
-- Google Gemini
-- Prompt-based reasoning
+- Synthetic Operational Telemetry
+- JSON Datasets
 
-## Memory
+### Memory
 
-- Abstract retrieval interface
-- Historical incident repository
+- Abstract Retrieval Interface
+- Historical Incident Repository
 
----
+### Evaluation
 
-# Project Roadmap
-
-## Phase 1
-
-Repository & Foundation
-
-Completed
+- DeepEval
+- Governance-focused Benchmarks
 
 ---
 
-## Phase 2
+# Installation
 
-Synthetic Incident Benchmark
+Clone the repository
 
-Completed
+```bash
+git clone https://github.com/<your-username>/agent-investigator.git
 
----
+cd agent-investigator
+```
 
-## Phase 2.5
+Create a virtual environment
 
-Dataset Validation
+```bash
+python -m venv venv
+```
 
-Completed
+Activate the environment
 
----
+```bash
+# Windows
+venv\Scripts\activate
 
-## Phase 3
+# Linux/macOS
+source venv/bin/activate
+```
 
-LangGraph Investigation Workflow
+Install dependencies
 
-Completed
+```bash
+pip install -r requirements.txt
+```
 
----
+Create a `.env` file
 
-## Phase 4
+```env
+GOOGLE_API_KEY=YOUR_API_KEY
 
-LangSmith Observability
+LANGCHAIN_API_KEY=YOUR_API_KEY
 
-Completed
+LANGCHAIN_TRACING_V2=true
 
----
-
-## Phase 5
-
-Memory Abstraction Layer
-
-Completed
-
----
-
-## Upcoming
-
-- Experiment Runner
-- DeepEval Integration
-- TencentDB-Agent-Memory
-- Governance Benchmark
-- AgentTrust
+LANGCHAIN_PROJECT=agent-investigator
+```
 
 ---
 
-# Research Vision
+# Usage
 
-This repository is not intended to build another agent framework.
+Generate benchmark datasets
 
-Instead, it provides a reproducible benchmark for understanding:
+```bash
+python generate_all.py
+```
 
-- How agents reason
-- How memory influences decisions
-- How observability improves trust
-- Where existing orchestration frameworks fail
-- What governance mechanisms future agent systems require
+Validate generated datasets
 
-The long-term objective is to experimentally validate the design principles behind **AgentTrust**, a governance framework for trustworthy autonomous AI systems.
+```bash
+python validate_dataset.py retry_storm
+```
+
+Run an investigation
+
+```bash
+python run_investigation.py retry_storm
+```
+
+Execute the benchmark suite
+
+```bash
+python test_investigation.py
+```
+
+---
+
+# Contributing
+
+Contributions are welcome.
+
+Feel free to open an issue for bug reports, feature requests, or research discussions. Pull requests improving benchmark scenarios, evaluation methodologies, or investigation workflows are always appreciated.
+
+---
+
+# Citation
+
+If you use this repository in your research, please consider citing it.
+
+```bibtex
+@software{agentinvestigator,
+  title={Agent Investigator},
+  author={Neha Chaudhari},
+  year={2026},
+  url={https://github.com/<your-username>/agent-investigator}
+}
+```
 
 ---
 
 # License
 
-MIT License
+Released under the **MIT License**.
