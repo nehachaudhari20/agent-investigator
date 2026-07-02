@@ -29,7 +29,8 @@ def _get_api_key() -> str | None:
 
 def format_evidence_for_llm(evidence: Dict[str, Any], 
                             logs_analysis: Dict[str, Any],
-                            metrics_analysis: Dict[str, Any]) -> str:
+                            metrics_analysis: Dict[str, Any],
+                            memory_context: str = "No historical memory available.") -> str:
     """
     Format aggregated evidence into a structured prompt for the LLM (Gemini).
     """
@@ -84,6 +85,23 @@ def format_evidence_for_llm(evidence: Dict[str, Any],
     prompt += f"\n### Services Ranked by Anomaly Score:\n"
     for service, score in list(evidence.get('suspect_scores', {}).items())[:5]:
         prompt += f"- {service}: {score:.3f}\n"
+
+    prompt += f"""
+## RETRIEVED HISTORICAL CONTEXT
+
+{memory_context}
+
+IMPORTANT:
+
+Historical memories are supporting context only.
+
+They may be outdated or incorrect.
+
+Always prioritize CURRENT evidence over historical memories.
+
+If current evidence conflicts with history,
+explicitly explain why.
+"""
     
     prompt += """
 ## TASK
@@ -200,6 +218,7 @@ def _format_gemini_error(error: Exception) -> str:
 def perform_rca(evidence: Dict[str, Any],
                 logs_analysis: Dict[str, Any],
                 metrics_analysis: Dict[str, Any],
+                memory_context: str = "No historical memory available.",
                 model: str = 'gemini-2.5-flash') -> Dict[str, Any]:
     """
     Perform root cause analysis using Google Gemini. Defaults to `gemini-2.5-flash`.
@@ -207,7 +226,12 @@ def perform_rca(evidence: Dict[str, Any],
     If the `google.generativeai` client is available and `GOOGLE_API_KEY` is set,
     the function will call Gemini. Otherwise it will fall back to a heuristic.
     """
-    prompt_text = format_evidence_for_llm(evidence, logs_analysis, metrics_analysis)
+    prompt_text = format_evidence_for_llm(
+        evidence,
+        logs_analysis,
+        metrics_analysis,
+        memory_context,
+    )
 
     # Try to call Google Generative AI (Gemini)
     try:
@@ -248,6 +272,10 @@ def rca_node(state: Dict[str, Any]) -> Dict[str, Any]:
     evidence = state.get('evidence')
     logs_analysis = state.get('logs_analysis')
     metrics_analysis = state.get('metrics_analysis')
+    memory_context = state.get(
+        'memory_context',
+        'No historical memory available.'
+    )
 
     if evidence is None:
         raise ValueError("evidence not found in state - evidence_node must run first")
@@ -257,7 +285,12 @@ def rca_node(state: Dict[str, Any]) -> Dict[str, Any]:
         raise ValueError("metrics_analysis not found in state - metrics_node must run first")
 
     # Perform RCA
-    rca_result = perform_rca(evidence, logs_analysis, metrics_analysis)
+    rca_result = perform_rca(
+        evidence,
+        logs_analysis,
+        metrics_analysis,
+        memory_context,
+    )
 
     return {
         **state,

@@ -15,6 +15,7 @@ PIPELINE_NODES = [
     "metrics_node",
     "trace_node",
     "evidence_node",
+    "memory_node",
     "rca_node",
 ]
 

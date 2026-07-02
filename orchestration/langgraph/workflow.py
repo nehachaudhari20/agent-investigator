@@ -14,6 +14,7 @@ from .nodes.metrics_node import metrics_node
 from .nodes.evidence_node import evidence_node
 from .nodes.rca_node import rca_node
 from .nodes.trace_node import trace_node
+from orchestration.langgraph.nodes.memory_node import MemoryNode
 from .observability import (
     PIPELINE_VERSION,
     build_run_config,
@@ -37,6 +38,8 @@ def create_investigation_graph() -> StateGraph:
     workflow.add_node("log_node", log_node)
     workflow.add_node("metrics_node", metrics_node)
     workflow.add_node("evidence_node", evidence_node)
+    memory_node = MemoryNode()
+    workflow.add_node("memory_node", memory_node)
     workflow.add_node("rca_node", rca_node)
     workflow.add_node("trace_node", trace_node)
     
@@ -45,7 +48,8 @@ def create_investigation_graph() -> StateGraph:
     workflow.add_edge("log_node", "metrics_node")
     workflow.add_edge("metrics_node", "trace_node")
     workflow.add_edge("trace_node", "evidence_node")
-    workflow.add_edge("evidence_node", "rca_node")
+    workflow.add_edge("evidence_node", "memory_node")
+    workflow.add_edge("memory_node", "rca_node")
     workflow.add_edge("rca_node", END)
     
     # Compile
@@ -77,6 +81,7 @@ def run_investigation(scenario: str, dataset_base_path: str = "datasets") -> Dic
         logs_analysis=None,
         metrics_analysis=None,
         evidence=None,
+        memory_context="No historical memory available.",
         rca_result=None,
         trace_analysis=None,
         
