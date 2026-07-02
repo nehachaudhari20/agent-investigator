@@ -26,4 +26,6 @@ class InvestigationState(TypedDict):
     trace_analysis: Optional[Dict[str, Any]]
     evidence: Optional[Dict[str, Any]]
     rca_result: Optional[Dict[str, Any]]
+    memory_context: str
+    rca_result: dict
 
