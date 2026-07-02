@@ -1,0 +1,46 @@
+{
+  "scenario": "retry_storm",
+  "root_cause": "risk-engine",
+  "confidence": 0.95,
+  "reasoning": "risk-engine is identified as the primary root cause due to multiple converging data points. It is the first service listed in the error cascade, indicating it initiated the problem. It exhibits the highest latency (3500ms) and the highest error rate (0.3000) across all services. Furthermore, its detailed metrics show an anomaly_score of 0.998, which is significantly higher than any other service. This service is explicitly noted as the 'Highest Latency Service' and a 'Latency Outlier', making it the most likely point of failure that subsequently affected downstream services, leading to their elevated latencies and error rates.",
+  "supporting_evidence": [
+    "Error Cascade: risk-engine is the first service listed in the error cascade.",
+    "Service Metrics: risk-engine reports 3500ms latency and 0.3000 error rate, which are the highest among all services.",
+    "Evidence Summary: risk-engine metrics show an anomaly_score = 0.998, indicating the highest anomaly level."
+  ],
+  "affected_services": [
+    "fraud-service",
+    "payment-service",
+    "gateway-service"
+  ],
+  "suspect_services": [
+    "risk-engine",
+    "payment-service",
+    "fraud-service",
+    "gateway-service"
+  ],
+  "suspect_scores": {
+    "risk-engine": 0.799,
+    "payment-service": 0.7,
+    "fraud-service": 0.614,
+    "gateway-service": 0
+  },
+  "error_patterns": {
+    "delayed": 200,
+    "timeout": 100,
+    "retry": 100,
+    "unavailable": 100
+  },
+  "analysis_details": {
+    "logs_analyzed": 500,
+    "services_evaluated": 4,
+    "latency_outliers": [
+      "fraud-service",
+      "risk-engine"
+    ],
+    "error_outliers": [
+      "fraud-service",
+      "risk-engine"
+    ]
+  }
+}

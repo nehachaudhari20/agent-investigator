@@ -1,0 +1,38 @@
+{
+  "scenario": "memory_poisoning",
+  "root_cause": "fraud-service",
+  "confidence": 0.95,
+  "reasoning": "The 'fraud-service' is the primary root cause due to its consistently degraded performance across multiple key metrics. It exhibits the highest latency (250ms) and is explicitly identified as both the 'Highest Latency Service' and a 'Latency Outlier (>1.5x average)'. Furthermore, it has the highest anomaly score (0.990) among all services, indicating it is the most anomalous component. The 'error_count = 250' in 'fraud-service' logs directly matches the 'timeout: 250 occurrences' detected, strongly suggesting the service itself is either experiencing or causing these timeouts due to its performance issues. The error cascade also heavily involves 'fraud-service' starting and ending with it.",
+  "supporting_evidence": [
+    "fraud-service: latency_ms = 250 (Highest Latency Service, Latency Outlier)",
+    "fraud-service: anomaly_score = 0.990 (Highest Services Ranked by Anomaly Score)",
+    "fraud-service: logs: error_count = 250 (Matches Error Patterns Detected: timeout: 250 occurrences)"
+  ],
+  "affected_services": [
+    "fraud-service",
+    "payment-service"
+  ],
+  "suspect_services": [
+    "fraud-service",
+    "payment-service",
+    "risk-engine"
+  ],
+  "suspect_scores": {
+    "fraud-service": 0.99,
+    "payment-service": 0.801,
+    "risk-engine": 0.356
+  },
+  "error_patterns": {
+    "timeout": 250
+  },
+  "analysis_details": {
+    "logs_analyzed": 500,
+    "services_evaluated": 3,
+    "latency_outliers": [
+      "fraud-service"
+    ],
+    "error_outliers": [
+      "fraud-service"
+    ]
+  }
+}
