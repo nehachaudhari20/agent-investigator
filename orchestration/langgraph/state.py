@@ -23,5 +23,7 @@ class InvestigationState(TypedDict):
     dataset_path: str
     logs_analysis: Optional[Dict[str, Any]]
     metrics_analysis: Optional[Dict[str, Any]]
+    trace_analysis: Optional[Dict[str, Any]]
     evidence: Optional[Dict[str, Any]]
     rca_result: Optional[Dict[str, Any]]
+

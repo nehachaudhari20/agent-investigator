@@ -6,21 +6,23 @@ from typing import Dict, List, Any
 from collections import Counter
 
 
-def aggregate_evidence(logs_analysis: Dict[str, Any], 
-                      metrics_analysis: Dict[str, Any]) -> Dict[str, Any]:
+def aggregate_evidence(logs_analysis: Dict[str, Any],
+                       metrics_analysis: Dict[str, Any],
+                       trace_analysis: Dict[str, Any]) -> Dict[str, Any]:
     """
     Combine evidence from both logs and metrics to create a unified view.
     
     Args:
         logs_analysis: Output from LogNode
         metrics_analysis: Output from MetricsNode
-        
+        trace_analysis: Output from TraceNode
     Returns:
         Dictionary with aggregated evidence
     """
     # Get suspects from both sources
     logs_suspects = logs_analysis.get('suspected_services', [])
     metrics_candidates = metrics_analysis.get('top_candidates', [])
+    trace_candidates = trace_analysis.get('top_trace_candidates', [])
     
     # Score each suspect
     suspect_scores = Counter()
@@ -39,8 +41,14 @@ def aggregate_evidence(logs_analysis: Dict[str, Any],
         score = anomaly_scores.get(service, 0) / max(max_anomaly, 1)
         suspect_scores[service] += score * 0.6  # 60% weight on metrics anomalies
     
+    # Weight from traces based on terminal service frequency
+    terminal_counts = trace_analysis.get('terminal_service_counts', {})
+    max_terminal = max(terminal_counts.values()) if terminal_counts else 1
+    for service in trace_candidates[:3]:
+        score = terminal_counts.get(service, 0) / max_terminal
+        suspect_scores[service] += score * 0.3
     # Get unique suspects
-    all_suspects = list(set(logs_suspects + metrics_candidates))
+    all_suspects = list(set(logs_suspects + metrics_candidates + trace_candidates))
     
     # Sort by combined score
     ranked_suspects = sorted(
@@ -72,6 +80,12 @@ def aggregate_evidence(logs_analysis: Dict[str, Any],
                 'source': 'metrics',
                 'type': 'anomaly_score',
                 'value': round(anomaly_scores[service], 3)
+            })
+        if service in terminal_counts:
+            evidence['evidence_items'].append({
+                'source': 'traces',
+                'type': 'terminal_trace_count',
+                'value': terminal_counts[service]
             })
         
         service_metrics = metrics_analysis.get('service_metrics', {}).get(service, {})
@@ -106,7 +120,11 @@ def aggregate_evidence(logs_analysis: Dict[str, Any],
         'latency_outliers': metrics_analysis.get('latency_outliers', []),
         'error_outliers': metrics_analysis.get('error_outliers', []),
         'total_logs': logs_analysis.get('total_logs_analyzed', 0),
-        'service_count': len(all_suspects)
+        'service_count': len(all_suspects),
+        'trace_candidates': trace_candidates,
+        'most_common_paths': trace_analysis.get('most_common_paths', []),
+        'dependency_edges': trace_analysis.get('dependency_edges', []),
+        'total_traces': trace_analysis.get('total_traces_analyzed', 0),
     }
 
 
@@ -122,13 +140,15 @@ def evidence_node(state: Dict[str, Any]) -> Dict[str, Any]:
     """
     logs_analysis = state.get('logs_analysis')
     metrics_analysis = state.get('metrics_analysis')
-    
+    trace_analysis = state.get('trace_analysis')
     if logs_analysis is None:
         raise ValueError("logs_analysis not found in state - log_node must run first")
     if metrics_analysis is None:
         raise ValueError("metrics_analysis not found in state - metrics_node must run first")
     
-    evidence = aggregate_evidence(logs_analysis, metrics_analysis)
+    if trace_analysis is None:
+        raise ValueError("trace_analysis not found in state - trace_node must run first")
+    evidence = aggregate_evidence(logs_analysis, metrics_analysis, trace_analysis)
     
     return {
         **state,
