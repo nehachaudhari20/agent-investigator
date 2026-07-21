@@ -254,7 +254,7 @@ workflow.add_edge("memory_node", "rca_node")
 For Phase 6 (DeepEval):
 
 ```python
-# In run_investigation.py
+# In scripts/run_investigation.py
 from deepeval.metrics import Hallucination, Faithfulness
 from deepeval.test_case import LLMTestCase
 
@@ -350,10 +350,10 @@ After modifying:
 python -c "from orchestration.langgraph.nodes.log_node import analyze_logs; ..."
 
 # Test full workflow
-python test_investigation.py
+python scripts/test_investigation.py
 
 # Test specific scenario
-python run_investigation.py retry_storm
+python scripts/run_investigation.py retry_storm
 ```
 
 ---

@@ -19,7 +19,7 @@ export OPENAI_API_KEY="sk-..."
 ## 1. Run Single Investigation
 
 ```bash
-python run_investigation.py retry_storm
+python scripts/run_investigation.py retry_storm
 ```
 
 **Expected output**:
@@ -60,7 +60,7 @@ Accuracy: ✓ CORRECT
 ## 2. Test All Scenarios
 
 ```bash
-python test_investigation.py
+python scripts/test_investigation.py
 ```
 
 **Expected**:
@@ -287,7 +287,7 @@ export OPENAI_API_KEY="sk-your-key-here"
 Ensure you're in the project root:
 ```bash
 cd d:\PROJECTS\agent-investigator
-python run_investigation.py retry_storm
+python scripts/run_investigation.py retry_storm
 ```
 
 ### Q: LLM is slow

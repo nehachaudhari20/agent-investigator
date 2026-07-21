@@ -80,6 +80,13 @@ agent-investigator/
 │
 ├── experiments/
 │
+├── scripts/
+│   ├── run_investigation.py
+│   ├── run_scenario.py
+│   ├── validate_dataset.py
+│   ├── test_investigation.py
+│   └── test_*.py
+│
 ├── outputs/
 │
 ├── docs/
@@ -317,28 +324,38 @@ LANGCHAIN_PROJECT=agent-investigator
 
 # Usage
 
-Generate benchmark datasets
+Run all commands from the repository root.
+
+Generate a benchmark dataset
 
 ```bash
-python generate_all.py
+python scripts/run_scenario.py retry_storm
+python scripts/run_scenario.py misleading_logs
+python scripts/run_scenario.py memory_poisoning
 ```
 
 Validate generated datasets
 
 ```bash
-python validate_dataset.py retry_storm
+python scripts/validate_dataset.py retry_storm
 ```
 
 Run an investigation
 
 ```bash
-python run_investigation.py retry_storm
+python scripts/run_investigation.py retry_storm
 ```
 
 Execute the benchmark suite
 
 ```bash
-python test_investigation.py
+python scripts/test_investigation.py
+```
+
+Run unit tests
+
+```bash
+python scripts/test_rca_node.py
 ```
 
 ---

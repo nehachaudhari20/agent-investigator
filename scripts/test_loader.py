@@ -1,3 +1,5 @@
+from _paths import PROJECT_ROOT  # noqa: F401 — ensures repo root is on sys.path
+
 from memory.loader import MemoryLoader
 
 loader = MemoryLoader()

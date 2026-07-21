@@ -236,11 +236,11 @@ orchestration/
 
 ```bash
 # Run investigation on retry_storm scenario
-python run_investigation.py retry_storm
+python scripts/run_investigation.py retry_storm
 
 # Run on other scenarios
-python run_investigation.py misleading_logs
-python run_investigation.py memory_poisoning
+python scripts/run_investigation.py misleading_logs
+python scripts/run_investigation.py memory_poisoning
 ```
 
 **Output**:
@@ -269,7 +269,7 @@ print(f"Evidence: {report['supporting_evidence']}")
 
 ```bash
 # Run all scenarios
-python test_investigation.py
+python scripts/test_investigation.py
 ```
 
 ---
